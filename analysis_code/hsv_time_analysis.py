@@ -98,13 +98,13 @@ def face_landmark_find(img, frame_count):
 #---------------------------------
 def smooth_data():
     #書き換えポイント
-    df = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data(shimizu).csv", encoding="shift-jis") #先に作成したデータファイルを開く 
+    df = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data(shimizu).csv", encoding="utf-8") #先に作成したデータファイルを開く 
 
     #線形補間をするために値をfloat型に変換する(NAN値はError扱い)
-    use_data_H = pd.to_numeric(df["H値"], errors="coerce")
-    use_data_S = pd.to_numeric(df["S値"], errors="coerce")
-    use_data_V = pd.to_numeric(df["V値"], errors="coerce")
-    use_data_time = pd.to_numeric(df["時間"])
+    use_data_H = pd.to_numeric(df["H Value"], errors="coerce")
+    use_data_S = pd.to_numeric(df["S Value"], errors="coerce")
+    use_data_V = pd.to_numeric(df["V Value"], errors="coerce")
+    use_data_time = pd.to_numeric(df["Time"])
 
     #float型に変換したデータを新しくuse_dataとして保存する
     use_data = pd.concat([use_data_H, use_data_S, use_data_V, use_data_time], axis=1)
@@ -112,15 +112,15 @@ def smooth_data():
     #欠損値を線形補間する
     use_data_drop_nan = use_data.interpolate()
 
-    #スムージングする(約20秒でのスムージング)
-    smooth_data = use_data_drop_nan.rolling(151).mean()
-    smooth_data = smooth_data.rename(columns={"H値":"平滑化H値", "S値":"平滑化S値", "V値":"平滑化V値"})
+    #スムージングする(約5秒でのスムージング)
+    smooth_data = use_data_drop_nan.rolling(5).mean()
+    smooth_data = smooth_data.rename(columns={"H Value":"Smooth H Value", "S Value":"Smooth S Value", "V Value":"Smooth V Value"})
 
     #スムージングしたデータをデータフレームに落とし込む
     analysis_data = pd.concat([use_data_drop_nan, smooth_data], axis=1)
 
     #csvファイルとして書き出しをする
-    analysis_data.to_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data_20second(shimizu).csv", encoding="shift-jis")
+    analysis_data.to_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data_20second(shimizu).csv", encoding="utf_8")
 
 
 #---------------------
@@ -128,36 +128,36 @@ def smooth_data():
 #---------------------
 def make_graph():
 
-    analysis_data = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data_20second(shimizu).csv", encoding="shift-jis")
+    analysis_data = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data_20second(shimizu).csv", encoding="utf-8")
 
     #----------------------------------------------
     #データのグラフ化を行う(20secでの平滑化(鼻(R-B)))
     #----------------------------------------------
 
-    max_graph = analysis_data["H値"].max() + 0.1
-    min_graph = analysis_data["H値"].min() - 0.1
+    max_graph = analysis_data["H Value"].max() + 0.1
+    min_graph = analysis_data["H Value"].min() - 0.1
 
     #複数グラフを1つに表示するための準備
     fig_nose_h = pyplot.figure(figsize=(15, 10))
     ax = fig_nose_h.add_subplot(1, 1, 1)
 
     #平滑化したデータをグラフ化
-    ax.plot("時間", "H値", data=analysis_data, color="red")
+    ax.plot("Time", "H Value", data=analysis_data, color="red")
     ax.set_ylim(min_graph, max_graph)
 
-    time = analysis_data["時間"].max() + 10
+    time = analysis_data["Time"].max() + 10
 
 
     #グラフの諸設定(fig_nose_20sec_rb)
-    pyplot.title("鼻部H値 分析結果(平滑化なし)", fontname="MS Gothic") #グラフタイトル
-    pyplot.xlabel("実験経過時間(秒)", fontname="MS Gothic") #x軸
+    pyplot.title("H Value(No-smooth_nose)", fontname="MS Gothic") #グラフタイトル
+    pyplot.xlabel("Time(sec)", fontname="MS Gothic") #x軸
     pyplot.xticks(np.arange(0, time, 20), fontsize=5) #x軸のメモリを増加
-    pyplot.ylabel("成分値", fontname="MS Gothic") #y軸
+    pyplot.ylabel("Value", fontname="MS Gothic") #y軸
     pyplot.minorticks_on() #補助線の追加
     pyplot.grid(axis="y") #y軸の目盛り線
-    pyplot.legend(prop={"family":"MS Gothic"}) #凡例
+    pyplot.legend() #凡例
 
-    fig_nose_h.saving("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_graph/nose_h(shimizu).png")
+    fig_nose_h.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_graph/nose_h(shimizu).png")
 
 
 
@@ -170,13 +170,13 @@ if __name__=="__main__":
     frame_count = 1 #CSVファイルの時間を書き込むためのカウント
 
     #書き換えポイント
-    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data.csv", "a") #新規作成モードでファイルを開く
-    f.write("H成分" + "," + "S成分" + "," + "V成分" + "," + "元時間" + "\n") #ヘッダー作成
+    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data(shimizu).csv", "a") #新規作成モードでファイルを開く
+    f.write("H Value" + "," + "S Value" + "," + "V Value" + "," + "Time" + "\n") #ヘッダー作成
     f.close()
 
     #顔のランドマーク検出のための前準備
     face_detector = dlib.get_frontal_face_detector()
-    predictor_path = "shape_predictor_68_face_landmarks.dat"
+    predictor_path = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/shape_predictor_68_face_landmarks.dat"
     face_predictor = dlib.shape_predictor(predictor_path)
 
     #ビデオを読み込みする
