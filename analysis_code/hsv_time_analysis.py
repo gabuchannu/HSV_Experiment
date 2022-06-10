@@ -3,7 +3,6 @@ import cv2
 from imutils import face_utils
 import statistics
 import numpy as np
-import datetime
 import pandas as pd
 from matplotlib import pyplot
 
@@ -13,7 +12,7 @@ from matplotlib import pyplot
 def face_landmark_find(img, frame_count):
 
     #書き換えポイント
-    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data(shimizu).csv", "a") #追記モードでファイルを開く
+    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data.csv", "a") #追記モードでファイルを開く
     
     #グレースケールに変換
     img_gry = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -98,7 +97,7 @@ def face_landmark_find(img, frame_count):
 #---------------------------------
 def smooth_data():
     #書き換えポイント
-    df = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data(shimizu).csv", encoding="utf-8") #先に作成したデータファイルを開く 
+    df = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data.csv", encoding="utf-8") #先に作成したデータファイルを開く 
 
     #線形補間をするために値をfloat型に変換する(NAN値はError扱い)
     use_data_H = pd.to_numeric(df["H Value"], errors="coerce")
@@ -120,7 +119,7 @@ def smooth_data():
     analysis_data = pd.concat([use_data_drop_nan, smooth_data], axis=1)
 
     #csvファイルとして書き出しをする
-    analysis_data.to_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data_20second(shimizu).csv", encoding="utf_8")
+    analysis_data.to_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data_20second.csv", encoding="utf_8")
 
 
 #---------------------
@@ -128,14 +127,14 @@ def smooth_data():
 #---------------------
 def make_graph():
 
-    analysis_data = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data_20second(shimizu).csv", encoding="utf-8")
+    analysis_data = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data_20second.csv", encoding="utf-8")
 
     #----------------------------------------------
-    #データのグラフ化を行う(20secでの平滑化(鼻(R-B)))
+    #データのグラフ化を行う(鼻部H値)
     #----------------------------------------------
 
-    max_graph = analysis_data["H Value"].max() + 0.1
-    min_graph = analysis_data["H Value"].min() - 0.1
+    max_graph_h = analysis_data["H Value"].max() + 3
+    min_graph_h = analysis_data["H Value"].min() - 3
 
     #複数グラフを1つに表示するための準備
     fig_nose_h = pyplot.figure(figsize=(15, 10))
@@ -143,21 +142,77 @@ def make_graph():
 
     #平滑化したデータをグラフ化
     ax.plot("Time", "H Value", data=analysis_data, color="red")
-    ax.set_ylim(min_graph, max_graph)
+    ax.set_ylim(min_graph_h, max_graph_h)
 
     time = analysis_data["Time"].max() + 10
 
 
-    #グラフの諸設定(fig_nose_20sec_rb)
-    pyplot.title("H Value(No-smooth_nose)", fontname="MS Gothic") #グラフタイトル
-    pyplot.xlabel("Time(sec)", fontname="MS Gothic") #x軸
+    #グラフの諸設定(fig_nose_h)
+    pyplot.title("H Value(No-smooth_nose)") #グラフタイトル
+    pyplot.xlabel("Time(sec)") #x軸
     pyplot.xticks(np.arange(0, time, 20), fontsize=5) #x軸のメモリを増加
-    pyplot.ylabel("Value", fontname="MS Gothic") #y軸
+    pyplot.ylabel("Value") #y軸
     pyplot.minorticks_on() #補助線の追加
     pyplot.grid(axis="y") #y軸の目盛り線
     pyplot.legend() #凡例
 
-    fig_nose_h.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_graph/nose_h(shimizu).png")
+    #----------------------------------------------
+    #データのグラフ化を行う(鼻部S値)
+    #----------------------------------------------
+
+    max_graph_s = analysis_data["S Value"].max() + 3
+    min_graph_s = analysis_data["S Value"].min() - 3
+
+    #複数グラフを1つに表示するための準備
+    fig_nose_s = pyplot.figure(figsize=(15, 10))
+    ax = fig_nose_s.add_subplot(1, 1, 1)
+
+    #平滑化したデータをグラフ化
+    ax.plot("Time", "S Value", data=analysis_data, color="green")
+    ax.set_ylim(min_graph_s, max_graph_s)
+
+    time = analysis_data["Time"].max() + 10
+
+
+    #グラフの諸設定(fig_nose_s)
+    pyplot.title("S Value(No-smooth_nose)") #グラフタイトル
+    pyplot.xlabel("Time(sec)") #x軸
+    pyplot.xticks(np.arange(0, time, 20), fontsize=5) #x軸のメモリを増加
+    pyplot.ylabel("Value") #y軸
+    pyplot.minorticks_on() #補助線の追加
+    pyplot.grid(axis="y") #y軸の目盛り線
+    pyplot.legend() #凡例
+
+    #----------------------------------------------
+    #データのグラフ化を行う(鼻部V値)
+    #----------------------------------------------
+
+    max_graph_v = analysis_data["V Value"].max() + 3
+    min_graph_v = analysis_data["V Value"].min() - 3
+
+    #複数グラフを1つに表示するための準備
+    fig_nose_v = pyplot.figure(figsize=(15, 10))
+    ax = fig_nose_v.add_subplot(1, 1, 1)
+
+    #平滑化したデータをグラフ化
+    ax.plot("Time", "V Value", data=analysis_data, color="blue")
+    ax.set_ylim(min_graph_v, max_graph_v)
+
+    time = analysis_data["Time"].max() + 10
+
+
+    #グラフの諸設定(fig_nose_v)
+    pyplot.title("V Value(No-smooth_nose)") #グラフタイトル
+    pyplot.xlabel("Time(sec)") #x軸
+    pyplot.xticks(np.arange(0, time, 20), fontsize=5) #x軸のメモリを増加
+    pyplot.ylabel("Value") #y軸
+    pyplot.minorticks_on() #補助線の追加
+    pyplot.grid(axis="y") #y軸の目盛り線
+    pyplot.legend() #凡例
+
+    fig_nose_h.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/iwata/nose_h.png")
+    fig_nose_s.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/iwata/nose_s.png")
+    fig_nose_v.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/iwata/nose_v.png")
 
 
 
@@ -170,7 +225,7 @@ if __name__=="__main__":
     frame_count = 1 #CSVファイルの時間を書き込むためのカウント
 
     #書き換えポイント
-    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/analysis_code/result_csv/remake_data(shimizu).csv", "a") #新規作成モードでファイルを開く
+    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data.csv", "a") #新規作成モードでファイルを開く
     f.write("H Value" + "," + "S Value" + "," + "V Value" + "," + "Time" + "\n") #ヘッダー作成
     f.close()
 
@@ -181,7 +236,7 @@ if __name__=="__main__":
 
     #ビデオを読み込みする
     #書き換えポイント1
-    cap = cv2.VideoCapture("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/Experiment_movie/trim_movie(shimizu).avi")
+    cap = cv2.VideoCapture("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/Experiment_movie/trim_movie(iwata).avi")
 
     while True: #動画が終わるまで続ける
         ret, img = cap.read()
