@@ -9,11 +9,6 @@ from imutils import face_utils
 #フレーム毎に処理を行う関数
 #----------------------
 def frame_process(img, frame_count):
-
-    #書き換えポイント
-    file_name = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/hsv_data/hsv_data" + str(frame_count) + ".csv"
-    f = open(file_name, "a") #追記モードでファイルを開く
-    f.write("H Value" + "," + "S Value" + "," + "V Value" + "\n") #ヘッダー作成
     
     #グレースケールに変換
     img_gry = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -24,6 +19,11 @@ def frame_process(img, frame_count):
         return
 
     else: #顔検出出来ていたら
+        #書き換えポイント
+        file_name = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/hsv_data/hsv_data" + str(frame_count) + ".csv"
+        f = open(file_name, "a") #追記モードでファイルを開く
+        f.write("H Value" + "," + "S Value" + "," + "V Value" + "\n") #ヘッダー作成
+        
         #検出した全顔に対して処理を行う
         for face in faces:
             #顔のランドマーク検出
@@ -48,7 +48,7 @@ def frame_process(img, frame_count):
         height_img2, weight_img2, channal_img2 = img2.shape
 
         #HSVに変換する
-        hsv_img = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV)
+        hsv_img = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV_FULL)
 
         #配列にする
         img_array = np.asarray(hsv_img)
@@ -56,9 +56,9 @@ def frame_process(img, frame_count):
         #取り出した鼻部を1ピクセルずつ見ていく
         for i in range(0, height_img2):
             for j in range(0, weight_img2):
-                V_value = int(img_array[i, j, :][0]) #V値の取得
+                V_value = int(img_array[i, j, :][2]) #V値の取得
                 S_value = int(img_array[i, j, :][1]) #S値の取得
-                H_value = int(img_array[i, j, :][2]) #H値の取得
+                H_value = int(img_array[i, j, :][0]) #H値の取得
 
                 f.write(str(H_value) + "," + str(S_value) + "," + str(V_value) + "\n")
 
@@ -82,12 +82,12 @@ def make_graph(frame_count):
     # ヒストグラムを作成
     fig_h = pyplot.figure()
     ax_h = fig_h.add_subplot(1, 1, 1)
-    ax_h.hist(data_h, bins=16, ec="black", range=(0, 255), color="red")
+    ax_h.hist(data_h, bins=32, ec="black", range=(0, 255), color="red")
     file_name_h = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/iwata/frame_data/h" + str(frame_count) + ".png"
     #グラフの諸設定(data_h)
     pyplot.title("H Value Frequency") #グラフタイトル
     pyplot.xlabel("Value") #x軸
-    pyplot.yticks(np.arange(0, 2200, 400))
+    pyplot.yticks(np.arange(0, 5000, 600))
 
     # 使いたいデータをndarray型に変換する
     data_s = np.array(df["S Value"])
@@ -99,7 +99,7 @@ def make_graph(frame_count):
     #グラフの諸設定(data_s)
     pyplot.title("S Value Frequency") #グラフタイトル
     pyplot.xlabel("Value") #x軸
-    pyplot.yticks(np.arange(0, 4200, 400))
+    pyplot.yticks(np.arange(0, 3200, 600))
 
     # 使いたいデータをndarray型に変換する
     data_v = np.array(df["V Value"])
@@ -111,7 +111,7 @@ def make_graph(frame_count):
     #グラフの諸設定(data_v)
     pyplot.title("V Value Frequency") #グラフタイトル
     pyplot.xlabel("Value") #x軸
-    pyplot.yticks(np.arange(0, 5200, 500))
+    pyplot.yticks(np.arange(0, 2600, 600))
 
     pyplot.close(fig_h)
     pyplot.close(fig_s)
