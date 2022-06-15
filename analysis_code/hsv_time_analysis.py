@@ -12,7 +12,7 @@ from matplotlib import pyplot
 def face_landmark_find(img, frame_count):
 
     #書き換えポイント
-    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data.csv", "a") #追記モードでファイルを開く
+    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/shimizu/remake_data.csv", "a") #追記モードでファイルを開く
     
     #グレースケールに変換
     img_gry = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -54,7 +54,7 @@ def face_landmark_find(img, frame_count):
         height_img2, weight_img2, channal_img2 = img2.shape
 
         #HSVに変換する
-        hsv_img = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV)
+        hsv_img = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV_FULL) #H値を256で表記
 
         #配列にする
         img_array = np.asarray(hsv_img)
@@ -62,9 +62,9 @@ def face_landmark_find(img, frame_count):
         #取り出した鼻部を1ピクセルずつ見ていく
         for i in range(0, height_img2):
             for j in range(0, weight_img2):
-                V_value = int(img_array[i, j, :][0]) #V値の取得
+                V_value = int(img_array[i, j, :][2]) #V値の取得
                 S_value = int(img_array[i, j, :][1]) #S値の取得
-                H_value = int(img_array[i, j, :][2]) #H値の取得
+                H_value = int(img_array[i, j, :][0]) #H値の取得
 
                 #リストに値を保存する
                 H_value_list.append(H_value)
@@ -97,7 +97,7 @@ def face_landmark_find(img, frame_count):
 #---------------------------------
 def smooth_data():
     #書き換えポイント
-    df = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data.csv", encoding="utf-8") #先に作成したデータファイルを開く 
+    df = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/shimizu/remake_data.csv", encoding="utf-8") #先に作成したデータファイルを開く 
 
     #線形補間をするために値をfloat型に変換する(NAN値はError扱い)
     use_data_H = pd.to_numeric(df["H Value"], errors="coerce")
@@ -119,7 +119,7 @@ def smooth_data():
     analysis_data = pd.concat([use_data_drop_nan, smooth_data], axis=1)
 
     #csvファイルとして書き出しをする
-    analysis_data.to_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data_20second.csv", encoding="utf_8")
+    analysis_data.to_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/shimizu/remake_data_20second.csv", encoding="utf_8")
 
 
 #---------------------
@@ -127,7 +127,7 @@ def smooth_data():
 #---------------------
 def make_graph():
 
-    analysis_data = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data_20second.csv", encoding="utf-8")
+    analysis_data = pd.read_csv("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/shimizu/remake_data_20second.csv", encoding="utf-8")
 
     #----------------------------------------------
     #データのグラフ化を行う(鼻部H値)
@@ -210,9 +210,9 @@ def make_graph():
     pyplot.grid(axis="y") #y軸の目盛り線
     pyplot.legend() #凡例
 
-    fig_nose_h.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/iwata/nose_h.png")
-    fig_nose_s.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/iwata/nose_s.png")
-    fig_nose_v.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/iwata/nose_v.png")
+    fig_nose_h.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/shimizu/nose_h.png")
+    fig_nose_s.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/shimizu/nose_s.png")
+    fig_nose_v.savefig("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/shimizu/nose_v.png")
 
 
 
@@ -225,7 +225,7 @@ if __name__=="__main__":
     frame_count = 1 #CSVファイルの時間を書き込むためのカウント
 
     #書き換えポイント
-    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/iwata/remake_data.csv", "a") #新規作成モードでファイルを開く
+    f = open("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/shimizu/remake_data.csv", "a") #新規作成モードでファイルを開く
     f.write("H Value" + "," + "S Value" + "," + "V Value" + "," + "Time" + "\n") #ヘッダー作成
     f.close()
 
@@ -236,7 +236,7 @@ if __name__=="__main__":
 
     #ビデオを読み込みする
     #書き換えポイント1
-    cap = cv2.VideoCapture("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/Experiment_movie/trim_movie(iwata).avi")
+    cap = cv2.VideoCapture("/Users/shimizu_italab/Desktop/Study/HSV_Experiment/Experiment_movie/trim_movie(shimizu).avi")
 
     while True: #動画が終わるまで続ける
         ret, img = cap.read()
