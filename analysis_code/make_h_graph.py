@@ -11,9 +11,9 @@ from imutils import face_utils
 #----------------------
 def frame_process():
     
-    file_name_f = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/shimizu/hsv_data/hsv_data13.csv"
-    file_name_r = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/shimizu/hsv_data/hsv_data11.csv"
-    file_name_l = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/shimizu/hsv_data/hsv_data5.csv"
+    file_name_f = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/sato/hsv_data/hsv_data39.csv"
+    file_name_r = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/sato/hsv_data/hsv_data49.csv"
+    file_name_l = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_csv/sato/hsv_data/hsv_data45.csv"
 
     # データの読み込み
     df_front = pd.read_csv(file_name_f, encoding="utf-8")
@@ -338,10 +338,13 @@ def make_graph(result_front, result_right, result_left):
     x_data = [0,8,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,200,208,216,224,232,240,248]
     x_data2 = [3.5,11.5,19.5,27.5,35.5,43.5,51.5,59.5,67.5,75.5,83.5,91.5,99.5,107.5,115.5,123.5,131.5,139.5,147.5,155.5,163.5,171.5,179.5,187.5,195.5,203.5,211.5,219.5,227.5,235.5,243.5,251.5]
 
+    pyplot.rcParams["font.size"] = 13
+
     fig_h = pyplot.figure()
     ax_h = fig_h.add_subplot(1, 1, 1)
     ax_h.set_xlabel("H Value")
     ax_h.set_ylabel("Frequency")
+    ax_h.set_ylim(0, 2800)
 
     # 使いたいデータをndarray型に変換する
     data_f = np.array(result_front)
@@ -349,11 +352,11 @@ def make_graph(result_front, result_right, result_left):
     data_l = np.array(result_left)
     # ヒストグラムを作成
     ax_h.grid()
-    ax_h.plot(x_data, data_f, color="red", label="Front")
-    ax_h.plot(x_data, data_r, color="green", label="right")
-    ax_h.plot(x_data, data_l, color="blue", label="left")
+    ax_h.plot(x_data2, data_f, color="red", label="Front")
+    ax_h.plot(x_data2, data_r, color="green", label="right")
+    ax_h.plot(x_data2, data_l, color="blue", label="left")
     ax_h.legend()
-    file_name_h = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/shimizu/move_data/h.png"
+    file_name_h = "/Users/shimizu_italab/Desktop/Study/HSV_Experiment/result_graph/sato/move_data/re_h2.png"
 
 
     # # 使いたいデータをndarray型に変換する

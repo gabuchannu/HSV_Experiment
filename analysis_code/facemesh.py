@@ -94,7 +94,7 @@ class Facemesh:
         image_width, image_height = image.shape[1], image.shape[0]
 
         if results.multi_face_landmarks is not None:
-            if (len(results.multi_face_landmarks) == 1):
+            if (len(results.multi_face_landmarks) == 1): #1人の時だったら
                 landmarks = results.multi_face_landmarks[0]
 
                 landmark_points = []
@@ -160,8 +160,8 @@ class Facemesh:
 if __name__ == '__main__':
     facemesh = Facemesh(0.7, 0.5)
 
-    image = cv2.imread('./sample.jpeg')
+    image = cv2.imread('./test_face.png')
     results = facemesh.run(image)
-    cv2.imwrite('./out.png', results['landmarks'])
-    cv2.imwrite('./out_face.png', results['face'])
-    cv2.imwrite('./out_nose.png', results['nose'])
+    cv2.imwrite('./out_landmark.jpeg', results['landmarks'])
+    cv2.imwrite('./out_face.jpeg', results['face'])
+    cv2.imwrite('./out_nose.jpeg', results['nose'])
